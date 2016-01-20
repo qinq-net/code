@@ -3,8 +3,10 @@
 # Provides:             _1107
 # Default-Start:        2 3 4 5
 # Default-Stop:         1
-#
+# Required-Start:       $network
+# Required-Stop:
 # Description: IoT
+### END INIT INFO
 """Generic linux daemon base class for python 3.x."""
 
 import sys, os, time, atexit, signal
