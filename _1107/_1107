@@ -128,9 +128,15 @@ class daemon:
 		
 		It will be called after the process has been daemonized by 
 		start() or restart()."""
-		import lib_0115
-		a=lib_0115.thread2(7,10,8)
-		a.start()
+		import lib_0228
+		
+
+
+#		import lib_0115
+#		a=lib_0115.thread2(7,10,8)
+#		a.start()
+##
+
 #		import lib_1107
 #		a=lib_1107.control(7,8,10,1)
 #		a.start()
