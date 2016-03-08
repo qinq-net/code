@@ -4,6 +4,7 @@ import RPi.GPIO as GPIO
 import time
 lock=threading.Lock()
 locktime=0
+_timein=0.5
 def do_pulse(OUT,timein):
     lock_pulse[OUT].acquire()
     GPIO.setup(OUT,GPIO.OUT)
@@ -25,7 +26,7 @@ def callback(IN1,IN2,OUT1,OUT2,timein):
     GPIO.add_event_detect(IN2,GPIO.RISING,lambda i:listen_second(IN2,IN1,OUT2,OUT1))
 #    GPIO.add_event_detect(IN1,GPIO.RISING,lambda i:listen_second(IN1,IN2,OUT1,OUT2))
     return
-def listen_second(IN1,IN2,OUT1,OUT2,timein=0.35):
+def listen_second(IN1,IN2,OUT1,OUT2,timein=_timein):
     if not lock.locked():
         lock.acquire()
         global locktime
@@ -61,11 +62,11 @@ GPIO.output(out2,GPIO.HIGH)
 callbacks1=[
         lambda i:listen_second(in1,in2,out1,out2),
         lambda i:listen_second(in1,in2,out2,out1),
-        lambda i:pulse(out1,0.35)]
+        lambda i:pulse(out1,_timein)]
 callbacks2=[
         lambda i:listen_second(in2,in1,out2,out1),
         lambda i:listen_second(in2,in1,out1,out2),
-        lambda i:pulse(out2,0.35)]
+        lambda i:pulse(out2,_timein)]
 def mode_change(CON):
     if lock.locked(): lock.release()
     global mode
