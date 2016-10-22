@@ -49,8 +49,7 @@ function fish_prompt --description "Write out the prompt"
 	end
 	
 	
-	set prompt_versioncon 	(echo -sn 	(timeout 0.5s fish -c __fish_svn_prompt) \
-						(timeout 0.5s fish -c __fish_git_prompt "(%s)") )
+	set prompt_versioncon 	(echo -sn 	(timeout 1.5s fish -c 'echo -s (__fish_svn_prompt) (__fish_git_prompt "(%s)")'))
 	export long_prompt_line2=( export fish_prompt_pwd_dir_length=0;
 				echo -s (set_color $fish_color_operator) "╚╦─[" \
 					(set_color $color_cwd) (prompt_pwd) \
