@@ -27,7 +27,9 @@ function iamroot
 end
 
 function fish_prompt --description "Write out the prompt"
-	export __status=$status
+	export __status=$status # must be first line of function
+    echo -ns (set_color $fish_color_comment) "." >&2; # show some dots
+
 	# Just calculate this once, to save a few cycles when displaying the prompt
 	if not set -q __fish_prompt_hostname
 		set -g __fish_prompt_hostname (hostname|cut -d . -f 1)
@@ -51,7 +53,7 @@ function fish_prompt --description "Write out the prompt"
 		set color_cwd $fish_color_cwd
 		set suffix '$'
 	end
-	
+    echo -ns "." >&2
 
 	export __fish_git_prompt_showcolorhints=1
 	export __fish_git_prompt_show_informative_status=1
@@ -74,7 +76,7 @@ function fish_prompt --description "Write out the prompt"
 			(set_color $fish_color_host) "$__fish_prompt_hostname" \
 			(set_color $fish_color_operator) "]"
 	end
-	
+    echo -ns "." >&2
 	
 	set prompt_versioncon 	(echo -sn 	(timeout 1.5s fish -c 'echo -s (__fish_svn_prompt) (__fish_git_prompt "(%s)")'))
 	export long_prompt_line2=( export fish_prompt_pwd_dir_length=0;
@@ -89,6 +91,8 @@ function fish_prompt --description "Write out the prompt"
 					(set_color $fish_color_operator) "] <" \
 					(set_color normal) "$prompt_versioncon" \
 					(set_color $fish_color_operator) ">" )
+    echo -ns "." >&2
+
 	#if [ (expr length (echo -n "$long_prompt_line2"|sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")) -gt "$COLUMNS" ];
 	#	if [ (expr length (echo -n "$short_prompt_line2"|sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")) -gt "$COLUMNS" ];
 	if [ (sw "$long_prompt_line2") -gt "$COLUMNS" ];
@@ -100,6 +104,7 @@ function fish_prompt --description "Write out the prompt"
 	else
 		echo "$long_prompt_line2"
 	end
+    echo -ns "." >&2
 	
 	echo -n -s \
 		(set_color $fish_color_operator) " ╚═[" \
@@ -108,4 +113,5 @@ function fish_prompt --description "Write out the prompt"
 		(if [ $__status -eq 0 ]; set_color normal; else; set_color $color_cwd; end) $__status \
 		(set_color $fish_color_operator) "> " \
 		(set_color normal) 
+    echo -en "\r\033[K" >&2
 end
