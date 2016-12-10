@@ -1,10 +1,17 @@
 #!/usr/bin/env fish
-# vim: set noet:
+# vim: set et ts=4 ft=sh:
 #
 # Set the default prompt command.
 
 function stringwidth
-	  perl -MText::CharWidth::PurePerl=mbswidth -le 'print mbswidth shift' "$argv"
+    if perl -MText::CharWidth -e 1 -X 2>/dev/null
+        perl -MText::CharWidth=mbswidth -le 'print mbswidth shift' "$argv"
+    else if perl -MText::CharWidth::PurePerl -e 1 -X 2>/dev/null
+        perl -MText::CharWidth::PurePerl=mbswidth -le 'print mbswidth shift' "$argv"
+    else
+        if which gexpr 2>/dev/null; alias __EXPR=gexpr; else; alias __EXPR=expr; end
+        __EXPR length "$argv"
+    end
 end
 
 function sw
@@ -20,6 +27,7 @@ function iamroot
 end
 
 function fish_prompt --description "Write out the prompt"
+	export __status=$status
 	# Just calculate this once, to save a few cycles when displaying the prompt
 	if not set -q __fish_prompt_hostname
 		set -g __fish_prompt_hostname (hostname|cut -d . -f 1)
@@ -30,11 +38,13 @@ function fish_prompt --description "Write out the prompt"
 #	switch $USER
 #	case root toor
 	if iamroot
+        set -l color_cwd_root
 		if set -q fish_color_cwd_root
-			set color_cwd $fish_color_cwd_root
+			set color_cwd_root $fish_color_cwd_root
 		else
-			set color_cwd $fish_color_cwd
+			set color_cwd_root red
 		end
+        set color_cwd $color_cwd_root
 		set suffix '#'
 #	case '*'
 	else
@@ -91,5 +101,11 @@ function fish_prompt --description "Write out the prompt"
 		echo "$long_prompt_line2"
 	end
 	
-	echo -n -s (set_color $fish_color_operator) " ╚═[" (set_color normal) "$suffix" (set_color $fish_color_operator) "] " (set_color normal) 
+	echo -n -s \
+		(set_color $fish_color_operator) " ╚═[" \
+		(set_color normal) "$suffix" \
+		(set_color $fish_color_operator) "] <" \
+		(if [ $__status -eq 0 ]; set_color normal; else; set_color $color_cwd; end) $__status \
+		(set_color $fish_color_operator) "> " \
+		(set_color normal) 
 end
