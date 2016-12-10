@@ -37,15 +37,16 @@ function fish_prompt --description "Write out the prompt"
 	set -x USER (whoami)
 	set -l color_cwd
 	set -l suffix
+    set -l color_cwd_root
+	if set -q fish_color_cwd_root
+		set color_cwd_root $fish_color_cwd_root
+	else
+		set color_cwd_root $fish_color_error
+	end
+
 #	switch $USER
 #	case root toor
 	if iamroot
-        set -l color_cwd_root
-		if set -q fish_color_cwd_root
-			set color_cwd_root $fish_color_cwd_root
-		else
-			set color_cwd_root red
-		end
         set color_cwd $color_cwd_root
 		set suffix '#'
 #	case '*'
@@ -112,7 +113,7 @@ function fish_prompt --description "Write out the prompt"
 		(set_color $fish_color_operator) " ╚═[" \
 		(set_color normal) "$suffix" \
 		(set_color $fish_color_operator) "] <" \
-		(if [ $__status -eq 0 ]; set_color normal; else; set_color $color_cwd; end) $__status \
+		(if [ $__status -eq 0 ]; set_color normal; else; set_color $fish_color_error; end) $__status \
 		(set_color $fish_color_operator) "> " \
 		(set_color normal) 
     echo -en "\r\033[K" >&2
