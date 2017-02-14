@@ -116,5 +116,6 @@ function fish_prompt --description "Write out the prompt"
 		(if [ $__status -eq 0 ]; set_color normal; else; set_color $fish_color_error; end) $__status \
 		(set_color $fish_color_operator) "> " \
 		(set_color normal) 
-    echo -en "\r\033[K" >&2
+    #echo -en "\r\033[K" >&2
+    echo -en "\b\b\b\b\b\033[K" >&2
 end
